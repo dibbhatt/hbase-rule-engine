@@ -1,0 +1,36 @@
+
+
+package hbase.rule.result;
+ 
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.KeyValue;
+import hbase.rule.util.ClassificationUtil;
+
+rule "Rule 1: Rule for ResultScore"
+salience 50
+when
+    put: Put( $s : Bytes.toFloat((get(Bytes.toBytes("d"), Bytes.toBytes("sc")).get(0)).getValue()))
+	eval( ClassificationUtil.isSimilar($s, 13 ) < 0 )
+then
+    put.add(Bytes.toBytes("d"), Bytes.toBytes("fr"), Bytes.toBytes("bad-score"));       
+end
+
+
+rule "Rule 2: Rule for ItemsWorked"
+salience 100
+when
+    put: Put( $s : Bytes.toInt((get(Bytes.toBytes("d"), Bytes.toBytes("iw")).get(0)).getValue()))
+	eval( ClassificationUtil.isSimilar($s, 10 ) < 0 )
+then
+    put.add(Bytes.toBytes("d"), Bytes.toBytes("fr"), Bytes.toBytes("less-item-worked"));          
+end
+
+rule "Rule 3: Rule for Good Score"
+salience 150
+when
+    put:  Put( $x : Bytes.toFloat((get(Bytes.toBytes("d"), Bytes.toBytes("sc")).get(0)).getValue()),$y : Bytes.toInt((get(Bytes.toBytes("d"), Bytes.toBytes("iw")).get(0)).getValue()))
+	eval( (ClassificationUtil.isSimilar($x, 13 ) >= 0 ) && (ClassificationUtil.isSimilar($y, 10 ) >= 0) )
+then
+    put.add(Bytes.toBytes("d"), Bytes.toBytes("fr"), Bytes.toBytes("good-score"));       
+end

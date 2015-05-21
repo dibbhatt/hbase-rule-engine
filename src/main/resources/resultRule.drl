@@ -1,0 +1,30 @@
+package hbase.rule.test;
+ 
+import hbase.rule.data.Result;
+import hbase.rule.result.ClassificationResult;
+
+global ClassificationResult classificationResult;
+
+rule "Rule 1: Rule for ItemsWorked"
+salience 50
+# no-loop true
+# lock-on-active true
+when
+    result: Result( $s : itemsWorked )
+	eval( classificationResult.isSimilar($s, 20 ) < 0 )
+then
+    result.setRuleFired(1);
+    classificationResult.setLessItemsWorked(true);	
+end
+
+rule "Rule 2: Rule for ResultScore"
+salience 100
+# no-loop true
+# lock-on-active true
+when
+    result: Result( $s : resultScore )
+	eval( classificationResult.isSimilar($s, 13 ) < 0 )
+then
+    result.setRuleFired(2);
+    classificationResult.setBelowAverageScore(true);	
+end
