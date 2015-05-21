@@ -1,0 +1,4 @@
+# hbase-rule-engine
+Distributed Rule Engine using HBase Co-Processor
+
+This project shows how popular open source Drool rule engine can be integrated with HBase using HBase Region Observer Co-Processor to apply and execute Rules in parallel. Here the Drool Rule Engine sits on the Data Path of HBase and able to fire (if rules are satisfied) rule for every request comes for a HBase Table. The Rule Engine is configured as HBase Region Observer Co-Processor, which mean it can run on every HBase Regions and able to trigger rule for any request that comes to that region. As the Co-Processor runs on Regions of HBase Table and runs in parallel to all RegionServers which means the Rules are also get distributed and runs in parallel. The Rule Processing get automatic fault tolerant support as recovery from RegionServer fail over is taken care by HBase.
